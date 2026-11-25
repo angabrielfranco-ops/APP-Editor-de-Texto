@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Texto</title>
+    <link rel="stylesheet" href="estilo.css">
+    
+</head>
+<body>
+    <h1>Editor de Texto</h1>
+    <!-- Caixa principal que envolve o editor inteiro -->
+    <main class="editor">
+        <!-- Barra de ferramentas: o molde dos botões -->
+        <div class="barra-ferramentas">
+
+            <button type="button" class="botao" data-comando="negrito" title="Negrito">
+                <b>N</b>
+            </button>
+
+            <button type="button" class="botao" data-comando="italico" title="Itálico">
+                <i>I</i>
+            </button>
+
+            <button type="button" class="botao" data-comando="sublinhado" title="Sublinhado">
+                <u>S</u>
+            </button>
+
+        </div>
+
+        <!-- Área de texto -->
+        <div id="area-texto" class="area-texto" contenteditable="true" spellcheck="false" data-placeholder="Digite ou cole seu texto aqui e selecione um trecho para formatar."></div>
+
+    <script src="script.js"></script>
+
+    </main>
+</body>
+</html>
