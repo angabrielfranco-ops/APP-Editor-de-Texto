@@ -12,7 +12,7 @@ const tagsPorComando = {
 // procurando a tag (ex.: "b"). Serve para saber se o negrito já está ligado.
 function acharTagAcima(no, nomeTag) {
   while (no && no !== areaTexto) {
-     if (no.nodeName.toLowerCase() === nomeDaTag) {
+     if (no.nodeName.toLowerCase() === nomeTag) {
       return no;        
     }
     no = no.parentNode; // sobe um nível na árvore DOM
@@ -22,7 +22,7 @@ return null;
 
 // Lê a posição exata da seleção, fatia o texto em três pedaços
 // (antes, selecionado, depois) e embrulha só o do meio na tag.
-function formatarTrechoSelecionado(nomeDaTag, trecho, selecao) {
+function formatarTrechoSelecionado(nomeTag, trecho, selecao) {
 
   // lê onde a seleção começa e termina
   const noInicial = trecho.startContainer;    
@@ -45,7 +45,7 @@ function formatarTrechoSelecionado(nomeDaTag, trecho, selecao) {
   const textoDepois = textoCompleto.slice(posicaoFinal);
 
 // cria a tag (ex.: <b>) e coloca só o trecho selecionado dentro dela
-  const elemento = document.createElement(nomeDaTag);
+  const elemento = document.createElement(nomeTag);
   elemento.textContent = textoSelecionado;
 
   // o pai do texto original vai receber os pedaços novos
@@ -64,16 +64,16 @@ function formatarTrechoSelecionado(nomeDaTag, trecho, selecao) {
 
   // seleciona o conteúdo da tag nova, para a pessoa ver o resultado
   const novoTrecho = document.createRange();
-  novoTrecho.selectNodeContents(elemento);
+  novoTrecho.selectNodeContents(elemento.firstChild);
   selecao.removeAllRanges();
   selecao.addRange(novoTrecho);
 }
 
 // LIGAR e DESLIGAR PARA AS PRÓXIMAS PALAVRAS
-function alternarProximasPalavras(nomeDaTag, trecho, selecao) {
+function alternarProximasPalavras(nomeTag, trecho, selecao) {
 
   // o cursor já está dentro dessa tag? (ex.: já está em negrito)
-  const tagAtual = acharTagAcima(selecao.anchorNode, nomeDaTag);
+  const tagAtual = acharTagAcima(selecao.anchorNode, nomeTag);
 
   // "\u200B" é um caractere INVISÍVEL.
   const marcador = document.createTextNode("\u200B");
@@ -84,7 +84,7 @@ function alternarProximasPalavras(nomeDaTag, trecho, selecao) {
 
   } else {
     // LIGAR: cria a tag com o marcador dentro dela.
-    const elemento = document.createElement(nomeDaTag);
+    const elemento = document.createElement(nomeTag);
     elemento.appendChild(marcador);
     trecho.insertNode(elemento);
   }
@@ -98,9 +98,9 @@ function alternarProximasPalavras(nomeDaTag, trecho, selecao) {
 }
 
 //FUNÇÃO PRINCIPAL
-function aplicarFormatacao(nomeDaTag) {
+function aplicarFormatacao(nomeTag) {
 
-  // a seleção atual da página
+  // API de seleção do navegador
   const selecao = window.getSelection();
 
   // sem seleção nenhuma, ou fora da área de texto: avisa e para
@@ -114,9 +114,9 @@ function aplicarFormatacao(nomeDaTag) {
   const trecho = selecao.getRangeAt(0);
 
   if (selecao.isCollapsed) {
-    alternarProximasPalavras(nomeDaTag, trecho, selecao);
+    alternarProximasPalavras(nomeTag, trecho, selecao);
   } else {
-    formatarTrechoSelecionado(nomeDaTag, trecho, selecao);
+    formatarTrechoSelecionado(nomeTag, trecho, selecao);
   }
 }
 
@@ -135,22 +135,16 @@ botoes.forEach(function (botao) {
   });
 });
 
-// O preventDefault impede o navegador de usar o jeito dele de formatar, para usarmos o nosso.
+// Impede o navegador de usar o jeito dele de formatar, para usarmos o nosso.
 areaTexto.addEventListener("keydown", function (evento) {
 
-  // só nos interessa quando Ctrl está apertado
+  // só nos interessa quando Ctrl (ou Cmd, no Mac) está apertado
   if (evento.ctrlKey || evento.metaKey) {
     const tecla = evento.key.toLowerCase();
 
-    if (tecla === "b") {
+    // se for B, I ou U, cancela o que o navegador faria
+    if (tecla === "b" || tecla === "i" || tecla === "u") {
       evento.preventDefault();
-      aplicarFormatacao("b");
-    } else if (tecla === "i") {
-      evento.preventDefault();
-      aplicarFormatacao("i");
-    } else if (tecla === "u") {
-      evento.preventDefault();
-      aplicarFormatacao("u");
     }
   }
 });
