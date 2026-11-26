@@ -69,3 +69,8 @@ h1 {
     content: attr(data-placeholder); /* pega o texto do atributo data-placeholder */
     color: #9aa5b8;                
 }
+
+.botao.ativo {
+  background-color: #4c6ef5;
+  color: white;
+}
